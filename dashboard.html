@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Dashboard | Hostel Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #1a1f2e; }
+        
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1a1f2e, #2d3748);
+        }
+        
+        .login-box {
+            background: white;
+            padding: 2rem;
+            border-radius: 1.5rem;
+            width: 90%;
+            max-width: 400px;
+        }
+        
+        .login-box input {
+            width: 100%;
+            padding: 0.8rem;
+            margin: 0.5rem 0;
+            border-radius: 0.8rem;
+            border: 1px solid #ddd;
+        }
+        
+        .login-box button {
+            width: 100%;
+            padding: 0.8rem;
+            background: #c45c2c;
+            color: white;
+            border: none;
+            border-radius: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+        
+        .dashboard-container {
+            display: none;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+        
+        .staff-header {
+            background: white;
+            border-radius: 1rem;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1rem;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #c45c2c;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.2rem;
+        }
+        
+        .card h3 {
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #f0e2d6;
+        }
+        
+        .booking-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .booking-item {
+            background: #f8fafc;
+            border-radius: 0.8rem;
+            padding: 0.8rem;
+            margin-bottom: 0.6rem;
+            border-left: 4px solid #c45c2c;
+        }
+        
+        .booking-actions {
+            margin-top: 0.5rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn-checkin { background: #22c55e; color: white; padding: 0.3rem 0.8rem; border: none; border-radius: 1rem; cursor: pointer; }
+        .btn-checkout { background: #f59e0b; color: white; padding: 0.3rem 0.8rem; border: none; border-radius: 1rem; cursor: pointer; }
+        .btn-cancel { background: #ef4444; color: white; padding: 0.3rem 0.8rem; border: none; border-radius: 1rem; cursor: pointer; }
+        
+        .rooms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 0.8rem;
+        }
+        
+        .room-card {
+            background: #f8fafc;
+            border-radius: 0.8rem;
+            padding: 0.8rem;
+            text-align: center;
+            border: 2px solid transparent;
+        }
+        
+        .room-card.available { border-color: #22c55e; background: #f0fdf4; }
+        .room-card.occupied { border-color: #f59e0b; background: #fffbeb; }
+        .room-card.maintenance { border-color: #ef4444; background: #fef2f2; }
+        
+        .bookings-table {
+            width: 100%;
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+        
+        th, td {
+            padding: 0.6rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        th {
+            background: #f8fafc;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 1rem;
+            font-size: 0.7rem;
+        }
+        
+        .status-confirmed { background: #dbeafe; color: #1e40af; }
+        .status-checked_in { background: #dcfce7; color: #166534; }
+        .status-checked_out { background: #fef3c7; color: #92400e; }
+        .status-cancelled { background: #fee2e2; color: #991b1b; }
+        
+        .logout-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            cursor: pointer;
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #1e2a32;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 1rem;
+            z-index: 1000;
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="loginScreen" class="login-container">
+    <div class="login-box">
+        <h2>🏠 Staff Login</h2>
+        <p style="color: #666; margin-bottom: 1rem;">Enter your credentials</p>
+        <input type="text" id="staffEmail" placeholder="Email" value="staff@hostel.com">
+        <input type="password" id="staffPassword" placeholder="Password" value="hostel123">
+        <button onclick="login()">Login →</button>
+    </div>
+</div>
+
+<div id="dashboard" class="dashboard-container">
+    <div class="staff-header">
+        <div>
+            <h2>🏠 Hostel Staff Dashboard</h2>
+            <p id="currentDate" style="color: #666;"></p>
+        </div>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card"><div class="stat-number" id="statArriving">0</div><div>Arriving Today</div></div>
+        <div class="stat-card"><div class="stat-number" id="statDeparting">0</div><div>Departing Today</div></div>
+        <div class="stat-card"><div class="stat-number" id="statOccupied">0</div><div>Rooms Occupied</div></div>
+        <div class="stat-card"><div class="stat-number" id="statAvailable">0</div><div>Rooms Available</div></div>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="card">
+            <h3>📥 Check-ins Today</h3>
+            <div id="checkinsList" class="booking-list">Loading...</div>
+        </div>
+        <div class="card">
+            <h3>📤 Check-outs Today</h3>
+            <div id="checkoutsList" class="booking-list">Loading...</div>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="card">
+            <h3>🛏️ Room Status</h3>
+            <div id="roomsList" class="rooms-grid">Loading...</div>
+        </div>
+        <div class="card">
+            <h3>⚡ Quick Actions</h3>
+            <button onclick="refreshAllData()" style="width:100%; padding:0.6rem; margin:0.3rem 0; background:#c45c2c; color:white; border:none; border-radius:0.8rem; cursor:pointer;">🔄 Refresh</button>
+            <button onclick="showWalkinModal()" style="width:100%; padding:0.6rem; margin:0.3rem 0; background:#22c55e; color:white; border:none; border-radius:0.8rem; cursor:pointer;">➕ Walk-in Guest</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>📋 All Bookings</h3>
+        <div class="bookings-table">
+            <table id="bookingsTable">
+                <thead><tr><th>Guest</th><th>Room</th><th>Check In</th><th>Check Out</th><th>Total</th><th>Status</th><th>Actions</th></tr></thead>
+                <tbody id="bookingsTableBody"><tr><td colspan="7">Loading...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div id="walkinModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); align-items:center; justify-content:center; z-index:1000;">
+    <div style="background:white; max-width:450px; width:90%; border-radius:1.5rem; padding:1.5rem;">
+        <h3>Walk-in Booking</h3>
+        <input type="text" id="walkinName" placeholder="Full name" style="width:100%; padding:0.6rem; margin:0.4rem 0; border-radius:0.6rem; border:1px solid #ddd;">
+        <input type="email" id="walkinEmail" placeholder="Email" style="width:100%; padding:0.6rem; margin:0.4rem 0; border-radius:0.6rem; border:1px solid #ddd;">
+        <input type="tel" id="walkinPhone" placeholder="Phone" style="width:100%; padding:0.6rem; margin:0.4rem 0; border-radius:0.6rem; border:1px solid #ddd;">
+        <select id="walkinRoom" style="width:100%; padding:0.6rem; margin:0.4rem 0; border-radius:0.6rem; border:1px solid #ddd;"></select>
+        <input type="date" id="walkinCheckIn" style="width:100%; padding:0.6rem; margin:0.4rem 0; border-radius:0.6rem; border:1px solid #ddd;">
+        <input type="date" id="walkinCheckOut" style="width:100%; padding:0.6rem; margin:0.4rem 0; border-radius:0.6rem; border:1px solid #ddd;">
+        <input type="number" id="walkinGuests" value="1" style="width:100%; padding:0.6rem; margin:0.4rem 0; border-radius:0.6rem; border:1px solid #ddd;">
+        <div style="display:flex; gap:0.8rem; margin-top:1rem;">
+            <button onclick="createWalkinBooking()" style="flex:1; background:#22c55e; color:white; border:none; padding:0.6rem; border-radius:0.8rem; cursor:pointer;">Create</button>
+            <button onclick="closeWalkinModal()" style="flex:1; background:#64748b; color:white; border:none; padding:0.6rem; border-radius:0.8rem; cursor:pointer;">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API_URL = 'http://localhost:3000/api';
+    let authToken = null;
+    let roomsData = [];
+
+    async function login() {
+        const email = document.getElementById('staffEmail').value;
+        const password = document.getElementById('staffPassword').value;
+        
+        try {
+            const response = await fetch(`${API_URL}/staff/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                authToken = data.token;
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                document.getElementById('currentDate').innerText = new Date().toLocaleDateString();
+                await refreshAllData();
+            } else {
+                alert('Invalid credentials');
+            }
+        } catch (error) {
+            alert('Cannot connect to backend. Make sure it\'s running.');
+        }
+    }
+    
+    function logout() {
+        authToken = null;
+        document.getElementById('dashboard').style.display = 'none';
+        document.getElementById('loginScreen').style.display = 'flex';
+    }
+    
+    async function fetchWithAuth(url, options = {}) {
+        const response = await fetch(url, {
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`,
+                ...options.headers
+            }
+        });
+        return response.json();
+    }
+    
+    async function refreshAllData() {
+        await Promise.all([
+            loadTodayData(),
+            loadRooms(),
+            loadAllBookings()
+        ]);
+    }
+    
+    async function loadTodayData() {
+        const data = await fetchWithAuth(`${API_URL}/staff/today`);
+        if (data.success) {
+            document.getElementById('statArriving').innerText = data.checkIns?.length || 0;
+            document.getElementById('statDeparting').innerText = data.checkOuts?.length || 0;
+            
+            const checkinsHtml = data.checkIns?.map(b => `
+                <div class="booking-item">
+                    <div><strong>${b.guest_name}</strong></div>
+                    <div style="font-size:0.75rem;">${b.room_name} · ${b.guests} guests</div>
+                    <div class="booking-actions">
+                        <button class="btn-checkin" onclick="checkIn(${b.id})">✅ Check In</button>
+                    </div>
+                </div>
+            `).join('') || '<p>No check-ins today</p>';
+            
+            const checkoutsHtml = data.checkOuts?.map(b => `
+                <div class="booking-item">
+                    <div><strong>${b.guest_name}</strong></div>
+                    <div style="font-size:0.75rem;">${b.room_name}</div>
+                    <div class="booking-actions">
+                        <button class="btn-checkout" onclick="checkOut(${b.id})">📤 Check Out</button>
+                    </div>
+                </div>
+            `).join('') || '<p>No check-outs today</p>';
+            
+            document.getElementById('checkinsList').innerHTML = checkinsHtml;
+            document.getElementById('checkoutsList').innerHTML = checkoutsHtml;
+        }
+    }
+    
+    async function loadRooms() {
+        const data = await fetchWithAuth(`${API_URL}/staff/rooms`);
+        if (data.success) {
+            roomsData = data.rooms;
+            const occupied = data.rooms.filter(r => r.status === 'occupied').length;
+            const available = data.rooms.filter(r => r.status === 'available').length;
+            document.getElementById('statOccupied').innerText = occupied;
+            document.getElementById('statAvailable').innerText = available;
+            
+            const roomsHtml = data.rooms.map(room => `
+                <div class="room-card ${room.status}">
+                    <div><strong>${room.room_number}</strong></div>
+                    <div style="font-size:0.7rem;">${room.status}</div>
+                    <div style="font-size:0.7rem;">👥 ${room.capacity}</div>
+                    <button onclick="updateRoomStatus(${room.id}, '${room.status === 'available' ? 'maintenance' : 'available'}')" style="margin-top:0.3rem; padding:0.2rem 0.5rem; border:none; border-radius:0.5rem; cursor:pointer;">
+                        ${room.status === 'available' ? '🔧 Maintenance' : '✅ Mark Available'}
+                    </button>
+                </div>
+            `).join('');
+            document.getElementById('roomsList').innerHTML = roomsHtml;
+        }
+    }
+    
+    async function loadAllBookings() {
+        const data = await fetchWithAuth(`${API_URL}/staff/bookings`);
+        if (data.success) {
+            const rows = data.bookings.slice(0, 20).map(b => `
+                <tr>
+                    <td>${b.guest_name}</td>
+                    <td>${b.room_name}</td>
+                    <td>${b.check_in}</td>
+                    <td>${b.check_out}</td>
+                    <td>${b.total_price} zł</td>
+                    <td><span class="status-badge status-${b.status?.replace('_', '-')}">${b.status}</span></td>
+                    <td>
+                        ${b.status === 'confirmed' ? `<button onclick="checkIn(${b.id})" style="background:#22c55e; color:white; border:none; padding:0.2rem 0.5rem; border-radius:0.5rem; cursor:pointer;">Check In</button>` : ''}
+                        ${b.status === 'checked_in' ? `<button onclick="checkOut(${b.id})" style="background:#f59e0b; color:white; border:none; padding:0.2rem 0.5rem; border-radius:0.5rem; cursor:pointer;">Check Out</button>` : ''}
+                        ${b.status !== 'cancelled' && b.status !== 'checked_out' ? `<button onclick="cancelBooking(${b.id})" style="background:#ef4444; color:white; border:none; padding:0.2rem 0.5rem; border-radius:0.5rem; margin-left:0.3rem; cursor:pointer;">Cancel</button>` : ''}
+                    </td>
+                </tr>
+            `).join('');
+            document.getElementById('bookingsTableBody').innerHTML = rows || '<tr><td colspan="7">No bookings found</td></tr>';
+        }
+    }
+    
+    async function checkIn(bookingId) {
+        await fetchWithAuth(`${API_URL}/staff/check-in/${bookingId}`, { method: 'POST' });
+        showToast('Guest checked in');
+        refreshAllData();
+    }
+    
+    async function checkOut(bookingId) {
+        await fetchWithAuth(`${API_URL}/staff/check-out/${bookingId}`, { method: 'POST' });
+        showToast('Guest checked out');
+        refreshAllData();
+    }
+    
+    async function cancelBooking(bookingId) {
+        if (confirm('Cancel this booking?')) {
+            await fetchWithAuth(`${API_URL}/staff/bookings/${bookingId}`, { method: 'DELETE' });
+            showToast('Booking cancelled');
+            refreshAllData();
+        }
+    }
+    
+    async function updateRoomStatus(roomId, newStatus) {
+        await fetchWithAuth(`${API_URL}/staff/rooms/${roomId}/status`, {
+            method: 'PUT',
+            body: JSON.stringify({ status: newStatus })
+        });
+        showToast(`Room status updated`);
+        loadRooms();
+    }
+    
+    function showWalkinModal() {
+        const roomSelect = document.getElementById('walkinRoom');
+        roomSelect.innerHTML = roomsData.filter(r => r.status === 'available').map(r => 
+            `<option value="${r.id}">${r.room_number} - ${r.capacity} guests (${r.base_price} zł/night)</option>`
+        ).join('');
+        
+        const today = new Date().toISOString().split('T')[0];
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        
+        document.getElementById('walkinCheckIn').value = today;
+        document.getElementById('walkinCheckOut').value = tomorrow.toISOString().split('T')[0];
+        document.getElementById('walkinModal').style.display = 'flex';
+    }
+    
+    async function createWalkinBooking() {
+        const roomId = document.getElementById('walkinRoom').value;
+        const room = roomsData.find(r => r.id == roomId);
+        const nights = (new Date(document.getElementById('walkinCheckOut').value) - new Date(document.getElementById('walkinCheckIn').value)) / (1000*60*60*24);
+        
+        const bookingData = {
+            name: document.getElementById('walkinName').value,
+            email: document.getElementById('walkinEmail').value,
+            phone: document.getElementById('walkinPhone').value,
+            roomId: roomId,
+            roomName: room?.room_number,
+            checkIn: document.getElementById('walkinCheckIn').value,
+            checkOut: document.getElementById('walkinCheckOut').value,
+            guests: parseInt(document.getElementById('walkinGuests').value),
+            totalPrice: room ? room.base_price * nights : 0,
+            message: ''
+        };
+        
+        await fetchWithAuth(`${API_URL}/staff/bookings/walkin`, {
+            method: 'POST',
+            body: JSON.stringify(bookingData)
+        });
+        
+        showToast('Walk-in booking created');
+        closeWalkinModal();
+        refreshAllData();
+    }
+    
+    function closeWalkinModal() {
+        document.getElementById('walkinModal').style.display = 'none';
+    }
+    
+    function showToast(message) {
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+</script>
+</body>
+</html>

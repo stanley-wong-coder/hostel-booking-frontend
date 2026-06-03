@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Your Hostel | Book Your Stay</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: #fefcf8;
+            color: #1e2a32;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 1.5rem 1.75rem 4rem;
+        }
+
+        .header {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+            border-bottom: 2px solid #ffe6c7;
+            padding-bottom: 1rem;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #c45c2c, #a13e16);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .badge {
+            background: #f5e6d8;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #a13e16;
+        }
+
+        .search-panel {
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem 2rem;
+            margin: 1rem 0 1.8rem;
+            border: 1px solid #ffebd6;
+        }
+
+        .search-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            align-items: flex-end;
+        }
+
+        .search-field {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .search-field label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #a77b55;
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+
+        .search-field input, .search-field select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: 2rem;
+            border: 1px solid #eedbcb;
+            background: #fffaf5;
+            font-family: 'Inter', monospace;
+            font-size: 0.9rem;
+        }
+
+        .search-field input:focus, .search-field select:focus {
+            outline: none;
+            border-color: #c45c2c;
+        }
+
+        .search-btn {
+            background: #c45c2c;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 3rem;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-top: 1.2rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 2rem 0 1.5rem;
+            text-align: center;
+            color: #2f3e46;
+        }
+
+        .rooms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .room-card {
+            background: white;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: transform 0.2s;
+            border: 1px solid #f1e2d4;
+        }
+
+        .room-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .room-image {
+            height: 180px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .room-info {
+            padding: 1.2rem;
+        }
+
+        .room-info h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+
+        .room-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 0.8rem 0;
+        }
+
+        .detail-badge {
+            background: #f5e6d8;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+
+        .price {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #c45c2c;
+            margin: 0.5rem 0;
+        }
+
+        .book-btn {
+            width: 100%;
+            padding: 0.7rem;
+            background: #1e2a32;
+            color: white;
+            border: none;
+            border-radius: 2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .book-btn:hover {
+            background: #c45c2c;
+        }
+
+        .info-section {
+            background: #eae3da;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            max-width: 500px;
+            width: 90%;
+            border-radius: 1.5rem;
+            padding: 2rem;
+        }
+
+        .modal-content input, .modal-content textarea {
+            width: 100%;
+            padding: 0.7rem;
+            margin: 0.5rem 0;
+            border-radius: 1rem;
+            border: 1px solid #ddd;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .btn-confirm {
+            background: #c45c2c;
+            color: white;
+            padding: 0.7rem;
+            border: none;
+            border-radius: 2rem;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .btn-cancel {
+            background: #e2e2e2;
+            color: #333;
+            padding: 0.7rem;
+            border: none;
+            border-radius: 2rem;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e2a32;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 2rem;
+            z-index: 1100;
+            animation: fadeOut 3s ease forwards;
+        }
+
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            70% { opacity: 1; }
+            100% { opacity: 0; display: none; }
+        }
+
+        footer {
+            text-align: center;
+            padding-top: 2rem;
+            color: #8f6e55;
+            font-size: 0.75rem;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .rooms-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="logo-area">
+            <div class="logo">🏠 Your Hostel Name</div>
+            <div class="badge">5 rooms · central location</div>
+        </div>
+    </div>
+
+    <div class="search-panel">
+        <div class="search-grid">
+            <div class="search-field">
+                <label>📅 CHECK IN</label>
+                <input type="date" id="checkIn">
+            </div>
+            <div class="search-field">
+                <label>📅 CHECK OUT</label>
+                <input type="date" id="checkOut">
+            </div>
+            <div class="search-field">
+                <label>👥 GUESTS</label>
+                <select id="guests">
+                    <option value="1">1 guest</option>
+                    <option value="2" selected>2 guests</option>
+                    <option value="3">3 guests</option>
+                    <option value="4">4 guests</option>
+                </select>
+            </div>
+            <div>
+                <button class="search-btn" id="searchBtn">🔍 CHECK AVAILABILITY</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-title">✨ Our Rooms ✨</div>
+    <div id="roomsContainer" class="rooms-grid">
+        <div style="text-align: center; grid-column: 1/-1;">Loading rooms...</div>
+    </div>
+
+    <div class="info-section">
+        <strong>📍 Our Location</strong><br>
+        Warsaw City Center · 24h Reception · Free WiFi · Shared Kitchen
+    </div>
+
+    <footer>
+        © Your Hostel Name · contact@yourhostel.com · +48 123 456 789
+    </footer>
+</div>
+
+<div id="bookingModal" class="modal">
+    <div class="modal-content">
+        <h3>Complete Your Booking</h3>
+        <p id="modalRoomInfo" style="color: #c45c2c; margin: 0.5rem 0;"></p>
+        <input type="text" id="guestName" placeholder="Full name *">
+        <input type="email" id="guestEmail" placeholder="Email *">
+        <input type="tel" id="guestPhone" placeholder="Phone number *">
+        <textarea id="specialRequests" placeholder="Special requests (optional)" rows="2"></textarea>
+        <div id="priceSummary" style="background: #fef2e6; padding: 0.8rem; border-radius: 1rem; margin: 0.5rem 0;"></div>
+        <div class="modal-buttons">
+            <button class="btn-confirm" id="confirmBooking">Confirm Booking</button>
+            <button class="btn-cancel" id="closeModal">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API_URL = 'http://localhost:3000/api';
+    let currentRoom = null;
+    let currentNights = 0;
+    let currentTotal = 0;
+
+    // Set default dates
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const nextWeek = new Date(today);
+    nextWeek.setDate(nextWeek.getDate() + 3);
+
+    document.getElementById('checkIn').value = tomorrow.toISOString().split('T')[0];
+    document.getElementById('checkOut').value = nextWeek.toISOString().split('T')[0];
+
+    // Load rooms on page load
+    loadRooms();
+
+    document.getElementById('searchBtn').addEventListener('click', loadRooms);
+
+    async function loadRooms() {
+        const checkIn = document.getElementById('checkIn').value;
+        const checkOut = document.getElementById('checkOut').value;
+        const guests = document.getElementById('guests').value;
+
+        if (!checkIn || !checkOut) {
+            alert('Please select check-in and check-out dates');
+            return;
+        }
+
+        const container = document.getElementById('roomsContainer');
+        container.innerHTML = '<div style="text-align: center; grid-column: 1/-1;">Checking availability...</div>';
+
+        try {
+            const response = await fetch(`${API_URL}/available-rooms?checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}`);
+            const data = await response.json();
+
+            if (data.success && data.rooms.length > 0) {
+                renderRooms(data.rooms, checkIn, checkOut, guests);
+            } else {
+                container.innerHTML = '<div style="text-align: center; grid-column: 1/-1;">No rooms available for these dates. Try different dates.</div>';
+            }
+        } catch (error) {
+            console.error('Error loading rooms:', error);
+            container.innerHTML = '<div style="text-align: center; grid-column: 1/-1;">Error connecting to server. Make sure backend is running.</div>';
+        }
+    }
+
+    function renderRooms(rooms, checkIn, checkOut, guests) {
+        const container = document.getElementById('roomsContainer');
+        container.innerHTML = rooms.map(room => {
+            const nights = calculateNights(checkIn, checkOut);
+            const total = room.base_price * nights;
+            const isPerPerson = room.room_name.includes('Shared') || room.room_name.includes('Dorm');
+            const priceDisplay = isPerPerson ? `${room.base_price} zł / person / night` : `${room.base_price} zł / night`;
+            
+            return `
+                <div class="room-card">
+                    <div class="room-image" style="background-image: url('https://placehold.co/600x400/eee/c45c2c?text=${room.room_number}');"></div>
+                    <div class="room-info">
+                        <h3>${room.room_name}</h3>
+                        <div class="room-details">
+                            <span class="detail-badge">👥 ${room.capacity} guests</span>
+                            <span class="detail-badge">🛏️ ${room.capacity === 2 ? 'Private' : room.capacity === 8 ? 'Dorm' : 'Family'}</span>
+                        </div>
+                        <div class="price">${priceDisplay}</div>
+                        <div style="font-size: 0.8rem; color: #666;">Total: ${total} zł for ${nights} nights</div>
+                        <button class="book-btn" onclick='openBookingModal(${JSON.stringify(room)}, ${nights}, ${total})'>Book Now →</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function calculateNights(checkIn, checkOut) {
+        const start = new Date(checkIn);
+        const end = new Date(checkOut);
+        const diffTime = Math.abs(end - start);
+        return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    }
+
+    function openBookingModal(room, nights, total) {
+        currentRoom = room;
+        currentNights = nights;
+        currentTotal = total;
+        
+        const guests = document.getElementById('guests').value;
+        const checkIn = document.getElementById('checkIn').value;
+        const checkOut = document.getElementById('checkOut').value;
+        
+        document.getElementById('modalRoomInfo').innerHTML = `<strong>${room.room_name}</strong> · ${room.capacity} guests max`;
+        document.getElementById('priceSummary').innerHTML = `
+            📅 ${checkIn} → ${checkOut}<br>
+            🏷️ ${nights} nights · ${guests} guests<br>
+            💰 <strong>Total: ${total} zł</strong><br>
+            <span style="font-size: 0.7rem;">✅ Pay at the hostel</span>
+        `;
+        
+        document.getElementById('bookingModal').style.display = 'flex';
+    }
+
+    document.getElementById('confirmBooking').addEventListener('click', async () => {
+        const name = document.getElementById('guestName').value.trim();
+        const email = document.getElementById('guestEmail').value.trim();
+        const phone = document.getElementById('guestPhone').value.trim();
+        const specialRequests = document.getElementById('specialRequests').value;
+        const guests = document.getElementById('guests').value;
+        const checkIn = document.getElementById('checkIn').value;
+        const checkOut = document.getElementById('checkOut').value;
+
+        if (!name || !email || !phone) {
+            alert('Please fill in all required fields');
+            return;
+        }
+
+        const bookingData = {
+            name: name,
+            email: email,
+            phone: phone,
+            roomId: currentRoom.id,
+            roomName: currentRoom.room_name,
+            checkIn: checkIn,
+            checkOut: checkOut,
+            guests: parseInt(guests),
+            totalPrice: currentTotal,
+            message: specialRequests
+        };
+
+        try {
+            const response = await fetch(`${API_URL}/bookings`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(bookingData)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showToast('🎉 Booking confirmed! Check your email for details.');
+                closeModal();
+                document.getElementById('guestName').value = '';
+                document.getElementById('guestEmail').value = '';
+                document.getElementById('guestPhone').value = '';
+                document.getElementById('specialRequests').value = '';
+            } else {
+                showToast('❌ Booking failed. Please try again.', true);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showToast('❌ Cannot connect to server. Make sure backend is running.', true);
+        }
+    });
+
+    function closeModal() {
+        document.getElementById('bookingModal').style.display = 'none';
+        currentRoom = null;
+    }
+
+    document.getElementById('closeModal').addEventListener('click', closeModal);
+    window.addEventListener('click', (e) => {
+        if (e.target === document.getElementById('bookingModal')) closeModal();
+    });
+
+    function showToast(message, isError = false) {
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.style.background = isError ? '#c45c2c' : '#1e2a32';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+</script>
+</body>
+</html>
